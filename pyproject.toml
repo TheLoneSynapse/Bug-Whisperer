@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mistake-finder"
+version = "0.2.0"
+description = "Find mistakes in your code and report them in a box: a CLI wrapper and a pytest plugin that explains every failure where it happens."
+readme = "README.md"
+requires-python = ">=3.8"
+keywords = ["testing", "pytest", "debugging", "errors", "developer-tools"]
+dependencies = []
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Framework :: Pytest",
+    "Topic :: Software Development :: Testing",
+    "Topic :: Software Development :: Debuggers",
+]
+
+[project.scripts]
+mistake-box = "mistake_finder.mistake_box:main"
+
+[project.entry-points.pytest11]
+mistake-finder = "mistake_finder.pytest_plugin"
+
+# The installable package *is* the skill folder, so there is a single source of
+# truth: `.bob/skills/mistake-finder/` is both what Bob reads and what pip ships.
+[tool.setuptools]
+packages = ["mistake_finder"]
+package-dir = { mistake_finder = ".bob/skills/mistake-finder" }

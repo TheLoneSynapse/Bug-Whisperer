@@ -1,0 +1,307 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Mistake Finder — Contribution Summary</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px; line-height: 1.6;
+    background: #ffffff; color: #1f2328;
+    padding: 32px 16px 48px;
+  }
+  .page { max-width: 760px; margin: 0 auto; }
+
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .subtitle { color: #57606a; font-size: 13px; margin-bottom: 28px; }
+  .badge {
+    display: inline-block; background: #3b82d4; color: #fff;
+    font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px;
+    margin-left: 8px; vertical-align: middle;
+  }
+
+  section { margin-bottom: 28px; }
+  h2 {
+    font-size: 13px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; color: #57606a;
+    border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; margin-bottom: 14px;
+  }
+
+  .card {
+    background: #f7f8fa; border: 1px solid #e5e7eb;
+    border-radius: 6px; padding: 14px 16px; margin-bottom: 10px;
+  }
+  .card-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+  .card-title code {
+    font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 13px; background: #e5e7eb; padding: 1px 5px; border-radius: 3px;
+  }
+  .card-desc { color: #1f2328; font-size: 13px; }
+  .tag {
+    display: inline-block; background: #e5e7eb; color: #57606a;
+    font-size: 11px; padding: 1px 7px; border-radius: 10px;
+    margin-right: 4px; margin-top: 5px;
+  }
+  .tag.green  { background: #d1fae5; color: #065f46; }
+  .tag.blue   { background: #dbeafe; color: #1e40af; }
+  .tag.purple { background: #ede9fe; color: #5b21b6; }
+  .tag.orange { background: #ffedd5; color: #9a3412; }
+
+  .file-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+  }
+  .file-item {
+    background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 4px;
+    padding: 8px 12px; font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 12px; color: #1f2328;
+  }
+  .file-item span { display: block; font-family: inherit; font-size: 11px; color: #57606a; margin-top: 2px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; font-weight: 600; color: #57606a; border-bottom: 1px solid #e5e7eb; padding: 6px 8px; }
+  td { padding: 6px 8px; border-bottom: 1px solid #f3f4f6; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  td code {
+    font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 12px; background: #f0f0f0; padding: 1px 4px; border-radius: 3px;
+  }
+
+  .box-demo {
+    background: #1e1e2e; color: #cdd6f4; font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 12px; border-radius: 6px; padding: 14px 18px; line-height: 1.7;
+    margin-top: 8px; overflow-x: auto; white-space: pre;
+  }
+  .box-demo .hl { color: #f38ba8; }
+  .box-demo .ok { color: #a6e3a1; }
+  .box-demo .dim { color: #585b70; }
+
+  .flow {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+    font-size: 12px; margin-top: 6px;
+  }
+  .flow-node {
+    background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 4px;
+    padding: 5px 12px; font-weight: 500;
+  }
+  .flow-arrow { color: #3b82d4; font-size: 14px; }
+
+  .stat-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .stat {
+    background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px;
+    padding: 10px 18px; text-align: center; flex: 1; min-width: 100px;
+  }
+  .stat-num { font-size: 26px; font-weight: 700; color: #3b82d4; }
+  .stat-label { font-size: 11px; color: #57606a; margin-top: 2px; }
+
+  footer {
+    margin-top: 40px; padding-top: 14px;
+    border-top: 1px solid #e5e7eb;
+    text-align: center; font-size: 12px; color: #57606a;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Mistake Finder <span class="badge">IBM Bob 2.0 Hackathon</span></h1>
+  <p class="subtitle">Full contribution overview — everything built in this workspace, in one place.</p>
+
+  
+  <div class="stat-row">
+    <div class="stat"><div class="stat-num">1</div><div class="stat-label">Bob Skill</div></div>
+    <div class="stat"><div class="stat-num">15</div><div class="stat-label">Library Test Files</div></div>
+    <div class="stat"><div class="stat-num">14</div><div class="stat-label">Demo Files</div></div>
+    <div class="stat"><div class="stat-num">3</div><div class="stat-label">Runner Scripts</div></div>
+    <div class="stat"><div class="stat-num">1</div><div class="stat-label">Voice Agent</div></div>
+  </div>
+
+  
+  <section>
+    <h2>Core IBM Bob Skill — <code>.bob/skills/mistake-finder/</code></h2>
+    <div class="card">
+      <div class="card-title"><code>SKILL.md</code> — Skill Definition</div>
+      <div class="card-desc">The main skill instruction set loaded by IBM Bob. Defines two modes of operation with full workflow, guardrails, phase-by-phase instructions, and parallel fan-out rules.</div>
+      <span class="tag green">Mode 1: Failure Triage</span>
+      <span class="tag blue">Mode 2: Proactive Review</span>
+      <span class="tag purple">Parallel Subagents</span>
+      <span class="tag orange">Rollback Loop</span>
+    </div>
+    <div class="card">
+      <div class="card-title"><code>box.py</code> — Error Parser + Box Renderer</div>
+      <div class="card-desc">Core engine. Parses Python tracebacks and pytest repr output into structured <code>Finding</code> objects. Generates context-aware suggestions per exception class (SyntaxError, NameError, KeyError, TypeError, ImportError, ZeroDivisionError, …). Renders Unicode ╔╗ or ASCII +-| error boxes.</div>
+      <span class="tag green">Dependency-free</span><span class="tag blue">Python 3.8+</span>
+    </div>
+    <div class="card">
+      <div class="card-title"><code>mistake_box.py</code> — CLI Wrapper</div>
+      <div class="card-desc">Command-line tool: <code>mistake-box python myfile.py</code>. Wraps any command, passes stdout through, intercepts stderr, and prints the box. Also supports <code>--file</code> (static syntax check) and <code>--log</code> (parse a saved CI log).</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><code>pytest_plugin.py</code> — Auto-Boxing pytest Plugin</div>
+      <div class="card-desc">Registers as an entry-point plugin. After every <code>pytest</code> run, produces one mistake box per failing test — no config, no per-project setup. Disable with <code>--no-mistake-box</code> or <code>MISTAKE_BOX=0</code>.</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><code>review-checklist.md</code> + <code>report-template.md</code></div>
+      <div class="card-desc">Six mistake classes for Mode 2 (logic &amp; boundaries, error handling, concurrency, resources, security, test gaps). Exact output formats for ranked reports in both modes.</div>
+    </div>
+  </section>
+
+  
+  <section>
+    <h2>How It Works — Architecture</h2>
+    <div class="flow">
+      <div class="flow-node">Red tests / changed files</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">Bob activates skill</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">Parallel subagents (read-only)</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">Ranked report (file:line evidence)</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">Fix loop + rollback</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">Green suite</div>
+    </div>
+    <div style="margin-top:10px;font-size:13px;color:#57606a">
+      Diagnosis time scales with the <strong>slowest</strong> failure, not the sum. Every finding requires <code>file:line</code> evidence — no evidence, not a finding.
+    </div>
+  </section>
+
+  
+  <section>
+    <h2>Box Output — What Developers See</h2>
+    <div class="box-demo"><span class="hl">╔══════════════════════════════════════════════════════════════╗
+║ MISTAKE FOUND - KeyError                                     ║
+╠══════════════════════════════════════════════════════════════╣
+║ WHERE                                                        ║
+║   mycode.py:29                                               ║
+║ &gt;&gt;  29 | print(df["age"])                                    ║
+╠══════════════════════════════════════════════════════════════╣
+║ WHAT WENT WRONG                                              ║
+║   KeyError: 'age'  (pandas column names are case-sensitive)  ║
+╠══════════════════════════════════════════════════════════════╣
+║ SUGGESTIONS                                                  ║
+║   1. Column names are case-sensitive — use df["Age"].        ║
+║   2. Run df.columns to see exact names.                      ║
+╚══════════════════════════════════════════════════════════════╝</span></div>
+  </section>
+
+  
+  <section>
+    <h2>Runner Scripts &amp; Launchers</h2>
+    <table>
+      <tr><th>File</th><th>What it does</th></tr>
+      <tr><td><code>find_mistakes.py</code></td><td>Universal runner. Auto-detects the active VS Code file (via argument → env var → CLI), runs it, prints the box + GCC-format diagnostic line for VS Code problem-matcher red squiggles.</td></tr>
+      <tr><td><code>smart_run.py</code></td><td>Smart library detector. Scans imports in any <code>.py</code> file, maps them to the matching test file(s) from <code>tests/</code>, and runs only those. Supports 15 libraries.</td></tr>
+      <tr><td><code>find-mistakes.bat</code></td><td>One-command Windows launcher for <code>find_mistakes.py</code>. Double-click or <code>.\find-mistakes.bat mycode.py</code>.</td></tr>
+      <tr><td><code>run.bat</code> / <code>run.ps1</code></td><td>General run launchers wired to <code>smart_run.py</code>.</td></tr>
+      <tr><td><code>check.bat</code> / <code>check.ps1</code></td><td>Quick syntax-check launchers.</td></tr>
+      <tr><td><code>test.bat</code> / <code>test.ps1</code></td><td>pytest launchers.</td></tr>
+      <tr><td><code>.vscode/tasks.json</code></td><td>VS Code task: Ctrl+Shift+P → Run Task → find-mistakes (passes <code>${file}</code> automatically).</td></tr>
+      <tr><td><code>install_skill.py</code></td><td>One-command global installer: copies the skill to <code>~/.bob/skills/</code>. Supports <code>--check</code> and <code>--remove</code>.</td></tr>
+    </table>
+  </section>
+
+  
+  <section>
+    <h2>Voice Agent — <code>voice_agent.py</code> + <code>voice.bat</code></h2>
+    <div class="card">
+      <div class="card-title">Say it out loud — full IBM Watson + Granite pipeline</div>
+      <div class="card-desc">
+        Say <em>"find the mistake in demo math"</em> and the agent: (1) records via ffmpeg/DirectShow mic, (2) sends WAV to Watson STT, (3) resolves the file from the transcript, (4) runs it + prints the box, (5) reads the result back via Watson TTS. Non-find questions are answered by Granite on watsonx.ai.
+      </div>
+      <span class="tag green">Watson STT</span>
+      <span class="tag green">Watson TTS</span>
+      <span class="tag blue">Granite (watsonx.ai)</span>
+      <span class="tag purple">Smart file resolution</span>
+      <span class="tag orange">Push-to-talk + typed mode</span>
+    </div>
+    <table>
+      <tr><th>Command</th><th>What it does</th></tr>
+      <tr><td><code>voice.bat</code></td><td>Interactive push-to-talk loop</td></tr>
+      <tr><td><code>voice.bat --text "..."</code></td><td>Typed input — no mic needed</td></tr>
+      <tr><td><code>voice.bat --file demos\demo_json.py</code></td><td>Analyse one file immediately</td></tr>
+      <tr><td><code>voice.bat --set-file mycode.py</code></td><td>Pin "the file I'm working on"</td></tr>
+      <tr><td><code>voice.bat --list-mics</code></td><td>Enumerate DirectShow microphones</td></tr>
+      <tr><td><code>voice.bat --no-speak</code></td><td>Print box only, no TTS</td></tr>
+    </table>
+  </section>
+
+  
+  <section>
+    <h2>15 Library Test Files — <code>tests/</code></h2>
+    <div class="file-grid">
+      <div class="file-item">pandas.test.py<span>DataFrame / Series</span></div>
+      <div class="file-item">numpy.test.py<span>Arrays / math ops</span></div>
+      <div class="file-item">matplotlib.test.py<span>Plotting</span></div>
+      <div class="file-item">sklearn.test.py<span>ML pipelines</span></div>
+      <div class="file-item">requests.test.py<span>HTTP client</span></div>
+      <div class="file-item">json.test.py<span>JSON parse/dump</span></div>
+      <div class="file-item">math.test.py<span>Math stdlib</span></div>
+      <div class="file-item">openpyxl.test.py<span>Excel read/write</span></div>
+      <div class="file-item">bs4.test.py<span>HTML scraping</span></div>
+      <div class="file-item">sqlalchemy.test.py<span>ORM / SQL</span></div>
+      <div class="file-item">pydantic.test.py<span>Data validation</span></div>
+      <div class="file-item">pillow.test.py<span>Image processing</span></div>
+      <div class="file-item">tqdm.test.py<span>Progress bars</span></div>
+      <div class="file-item">scipy.test.py<span>Scientific computing</span></div>
+      <div class="file-item">seaborn.test.py<span>Statistical plots</span></div>
+    </div>
+  </section>
+
+  
+  <section>
+    <h2>14 Demo Files — <code>demos/</code></h2>
+    <p style="font-size:13px;color:#57606a;margin-bottom:8px">Each file contains a deliberate bug (WRONG) next to the correct version — runnable demonstrations for every supported library.</p>
+    <div class="file-grid">
+      <div class="file-item">demo_bs4.py</div>
+      <div class="file-item">demo_json.py</div>
+      <div class="file-item">demo_math.py</div>
+      <div class="file-item">demo_matplotlib.py</div>
+      <div class="file-item">demo_numpy.py</div>
+      <div class="file-item">demo_openpyxl.py</div>
+      <div class="file-item">demo_pillow.py</div>
+      <div class="file-item">demo_pydantic.py</div>
+      <div class="file-item">demo_requests.py</div>
+      <div class="file-item">demo_scipy.py</div>
+      <div class="file-item">demo_seaborn.py</div>
+      <div class="file-item">demo_sklearn.py</div>
+      <div class="file-item">demo_sqlalchemy.py</div>
+      <div class="file-item">demo_tqdm.py</div>
+    </div>
+  </section>
+
+  
+  <section>
+    <h2>Packaging &amp; Installation</h2>
+    <div class="card">
+      <div class="card-title"><code>pyproject.toml</code> — Installable Python Package</div>
+      <div class="card-desc">
+        <code>pip install .</code> registers the <code>mistake-box</code> CLI entry-point and the <code>pytest11</code> plugin entry-point. Works in any interpreter — VS Code Testing panel, PyCharm, terminal, CI. One install, zero per-project config.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><code>.env.example</code> — Credential Template</div>
+      <div class="card-desc">Template for <code>IBM_API_KEY</code>, <code>IBM_STT_URL</code>, <code>IBM_TTS_URL</code>, <code>WATSONX_URL</code>, <code>WATSONX_PROJECT_ID</code>, <code>WATSONX_MODEL</code>, <code>VOICE_MIC</code>, <code>FFMPEG</code>. Real <code>.env</code> is gitignored.</div>
+    </div>
+  </section>
+
+  
+  <section>
+    <h2>Built-in Guardrails</h2>
+    <table>
+      <tr><th>Rule</th><th>Enforcement</th></tr>
+      <tr><td>Subagents are read-only during investigation</td><td>Hard rule in <code>SKILL.md</code> Phase 1</td></tr>
+      <tr><td>Never weaken / skip / delete a test</td><td>Repeated in every subagent brief</td></tr>
+      <tr><td>Every claim needs <code>file:line</code> evidence</td><td>No evidence → not a finding</td></tr>
+      <tr><td>One fix per module per iteration</td><td>Phase 3 fix loop constraint</td></tr>
+      <tr><td>Rollback on any fix that doesn't turn green</td><td>Phase 3 rollback step</td></tr>
+      <tr><td>Full suite re-run before declaring done</td><td>Phase 4 verification</td></tr>
+    </table>
+  </section>
+
+  <footer>Made with IBM Bob</footer>
+</div>
+</body>
+</html>

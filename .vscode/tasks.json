@@ -1,0 +1,64 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "find-mistakes",
+            "type": "shell",
+            "command": ".venv\\\\Scripts\\\\python.exe find_mistakes.py ${file}",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": false,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "clear": true
+            },
+            "problemMatcher": {
+                "owner": "mistake-finder",
+                "fileLocation": [
+                    "absolute"
+                ],
+                "pattern": {
+                    "regexp": "^(.+):(\\d+):(\\d+):\\s+error:\\s+(.+)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "message": 4,
+                    "severity": "error"
+                }
+            }
+        },
+        {
+            "label": "voice: pin open file",
+            "type": "shell",
+            "command": ".venv\\\\Scripts\\\\python.exe voice_agent.py --set-file ${file}",
+            "presentation": {
+                "echo": false,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "voice: auto-pin on save",
+            "type": "shell",
+            "command": ".venv\\\\Scripts\\\\python.exe voice_agent.py --set-file ${file}",
+            "runOptions": {
+                "runOn": "fileSave"
+            },
+            "presentation": {
+                "echo": false,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "clear": false
+            },
+            "problemMatcher": []
+        }
+    ]
+}

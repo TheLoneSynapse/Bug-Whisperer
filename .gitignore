@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.freebuff/
+build/
+dist/
+*.egg-info/
+
+# voice agent: secrets and local state
+.env
+.voice_current
+*.voice.wav
