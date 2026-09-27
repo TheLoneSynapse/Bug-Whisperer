@@ -1,188 +1,214 @@
-# Bug Whisperer — an IBM Bob skill that finds your mistakes
+# 🐛 Bug Whisperer — Find Mistakes in Your Code Automatically
 
-> **Theme:** Build with purpose using IBM Bob 2.0 (IBM Bob 2.0 Hackathon, lablab.ai)
-> **What it is:** A portable Bob **skill** — no example code, no sample app.
-> You write your own code in Bob; this skill finds your mistakes.
+> **Made for the IBM Bob 2.0 Hackathon (lablab.ai)**
+> A skill for IBM Bob that finds your coding mistakes, explains them in plain English, and fixes them — automatically.
 
-## Problem
+---
 
-Two moments burn developer time:
+## 📖 Table of Contents
 
-1. **A red test suite.** Failures get diagnosed serially — read failure #1,
-   grep, hypothesize; move to failure #2 in a different module with fresh
-   context. Time scales with the *sum* of all failures, and recall depends on
-   how tired you are.
-2. **Code you just wrote.** Mistakes ship because review is manual,
-   inconsistent, and skipped under deadline pressure.
+1. [What is this?](#-what-is-this)
+2. [What does it do?](#-what-does-it-do)
+3. [What do I need before I start?](#-what-do-i-need-before-i-start)
+4. [Step 1 — Download the project](#-step-1--download-the-project)
+5. [Step 2 — Install Python](#-step-2--install-python)
+6. [Step 3 — Install the tool](#-step-3--install-the-tool)
+7. [Step 4 — Use it in IBM Bob IDE](#-step-4--use-it-in-ibm-bob-ide)
+8. [Step 5 — Use it in your Terminal](#-step-5--use-it-in-your-terminal)
+9. [Step 6 — Use it with your Voice](#-step-6--use-it-with-your-voice)
+10. [Example: What the output looks like](#-example-what-the-output-looks-like)
+11. [Troubleshooting](#-troubleshooting)
+12. [Project File Map](#-project-file-map)
 
-## Solution
+---
 
-`mistake-finder` is a Bob skill that fans out **parallel subagents** — one per
-failing test, or one per mistake class — each in its own isolated context
-window, and returns only compact, evidence-backed summaries. The main agent
-aggregates a ranked report and (for failing tests) applies one minimal fix at a
-time with **rollback** on any fix that misses.
+## 🤔 What is this?
 
-- **Mode 1 — Failure triage:** tests red → one read-only subagent per failing
-  test traces the failure to a root cause (`file:line` + confidence), the main
-  agent fixes with rollback until the suite is green.
-- **Mode 2 — Proactive review:** ask *"check my code for mistakes"* → one
-  read-only subagent per mistake class (logic & boundaries, error handling,
-  concurrency, resources, security, test gaps) hunts your uncommitted changes.
+**Bug Whisperer** is a tool that reads your Python code and tells you exactly **what went wrong**, **where it went wrong**, and **how to fix it** — in simple, friendly language.
 
-Diagnosis time scales with the *slowest* failure, not the sum — and every
-finding carries evidence or it isn't reported.
+Think of it like a helpful teacher looking over your shoulder while you code. When something breaks, instead of seeing a scary red error message, you see a neat box that says:
 
-```mermaid
-flowchart LR
-    A["Your code in Bob IDE<br/>(red tests or fresh changes)"] --> B{"mistake-finder mode"}
-    B -->|failing tests| C["Subagent per failing test<br/>(read-only root-cause hunt)"]
-    B -->|ask for review| D["Subagent per mistake class<br/>(6 classes, parallel)"]
-    C --> E["Ranked report<br/>root cause + file:line + confidence"]
-    D --> E
-    E --> F["Fix loop: one minimal fix,<br/>re-run test, rollback on red"]
-    F --> G["Green suite / clean review"]
-```
+- 📍 **WHERE** the mistake is (exact file and line number)
+- ❌ **WHAT WENT WRONG** (explained in plain English)
+- 💡 **SUGGESTIONS** (step-by-step tips to fix it)
 
-## What's in this repo
+---
 
-```
-.bob/skills/mistake-finder/
-├── SKILL.md               the skill — workflow for both modes
-├── review-checklist.md    the mistake classes Mode 2 hunts for
-├── report-template.md     exact report formats for both modes
-├── box.py                 core: error parser, suggestion engine, box renderer
-├── mistake_box.py         CLI: run code in the terminal, get a boxed report
-├── pytest_plugin.py       pytest plugin: box every failing test automatically
-├── __init__.py            makes the folder importable/installable as a package
-└── (the package *is* the folder — see pyproject.toml)
-pyproject.toml             packaging: `mistake-box` CLI + pytest plugin
-install_skill.py           one-command global install into IBM Bob
-bob_sessions/              required Bob task-session screenshots (submission)
-find_mistakes.py           universal runner — auto-detects active file
-find-mistakes.bat          one-command launcher (Windows)
-smart_run.py               smart library detector for run.bat
-tests/                     15 individual *.test.py demo files (one per library)
-demos/                     14 runnable demo files showing WRONG vs CORRECT
-.vscode/tasks.json         VS Code task: Ctrl+Shift+P → Run Task → find-mistakes
-```
+## ✨ What does it do?
 
-## Install as an extension (any editor / IDE)
+It has **two main modes**:
 
-`pip install` turns this repo into an installable extension, not just a skill:
+### Mode 1 — Fix Failing Tests 🔴→🟢
+When your tests are failing (showing red errors), Bug Whisperer:
+1. Looks at every failing test at the same time (in parallel)
+2. Figures out the root cause of each failure
+3. Applies the smallest possible fix
+4. Checks if the fix worked — if not, it undoes it and tries again
 
-```bash
-pip install .            # or: pip install -e .   for a live checkout
-```
+### Mode 2 — Review Your Code 🔍
+When you just wrote some code and want a second opinion, Bug Whisperer:
+1. Checks for logic errors and edge cases
+2. Checks for security issues
+3. Checks for missing error handling
+4. Gives you a ranked list of findings with evidence
 
-That registers two things in the Python environment you install into:
+---
 
-- **A pytest plugin.** From then on, every `pytest` run ends with a boxed report
-  for each failing test — no wrapper, no config, no per-project setup. Install
-  once and it works in the terminal, CI, and any IDE that runs pytest with that
-  interpreter (VS Code's Testing panel, PyCharm's run gutter, ...).
-- **A `mistake-box` command** — the wrapper from step 3b, now on your PATH:
+## 📋 What do I need before I start?
 
-  ```bash
-  mistake-box python mycode.py
-  mistake-box --file mycode.py
-  mistake-box --log ci.log
-  ```
+You need **3 things** installed on your computer:
 
-Turn the plugin off for one run with `--no-mistake-box`, or globally by setting
-`MISTAKE_BOX=0`.
+| Thing | What it is | Where to get it |
+|-------|-----------|-----------------|
+| **Python 3.8 or newer** | The programming language this tool uses | [python.org/downloads](https://python.org/downloads) |
+| **Git** | A tool to download code from GitHub | [git-scm.com](https://git-scm.com/downloads) |
+| **IBM Bob IDE** | The AI coding assistant this skill runs inside | [IBM Bob](https://www.ibm.com/products/bob) |
 
-```
-╔════════════════════════════════════════════════════════════════╗
-║ MISTAKE FOUND - AssertionError                                 ║
-╠════════════════════════════════════════════════════════════════╣
-║ TEST                                                           ║
-║   tests/test_calc.py::test_add                                 ║
-╠════════════════════════════════════════════════════════════════╣
-║ WHERE                                                          ║
-║   tests/test_calc.py:5                                         ║
-║      4 | def test_add():                                       ║
-║ >>   5 |     assert add(2, 3) == 5                             ║
-╠════════════════════════════════════════════════════════════════╣
-║ WHAT WENT WRONG                                                ║
-║   AssertionError: assert -1 == 5 | +  where -1 = add(2, 3)     ║
-╠════════════════════════════════════════════════════════════════╣
-║ SUGGESTIONS                                                    ║
-║   1. Read the assertion: what value did the code actually      ║
-║   produce, and what did the test expect? ...                   ║
-╚════════════════════════════════════════════════════════════════╝
-```
+> 💡 **Not sure if you have Python?** Open a terminal (Command Prompt on Windows) and type:
+> ```
+> python --version
+> ```
+> If you see something like `Python 3.11.0` — you're good! If you see an error, follow Step 2 below.
 
-> Point the IDE at the interpreter you installed into (VS Code: **Python:
-> Select Interpreter**; PyCharm: project interpreter). If an IDE runs tests in
-> its own throwaway environment, run `pip install .` inside *that* environment.
+---
 
-## Install and run in IBM Bob (step by step)
+## 📥 Step 1 — Download the project
 
-### 1. Load the skill
+Open your **Terminal** (on Windows: press `Windows key + R`, type `cmd`, press Enter).
 
-Two options:
-
-- **This repo only (project-scoped):** nothing to do. Bob picks up skills from
-  `<project>/.bob/skills/` automatically when you open this project.
-- **Every project (global):** from this repo's root, run
-
-  ```bash
-  python install_skill.py
-  ```
-
-  That copies the skill to `~/.bob/skills/mistake-finder/`. Check it worked:
-
-  ```bash
-  python install_skill.py --check    # status only
-  python install_skill.py --remove   # uninstall the global copy
-  ```
-
-### 2. Verify Bob sees it
-
-1. Open Bob IDE (this project, or any project if you installed globally).
-2. Open **Settings → Skills** and confirm `mistake-finder` is listed, with its
-   location shown (project or `~/.bob/skills`).
-3. Optional, for hands-free activation: **Settings → Auto-Approve → Skills**
-   ON. Otherwise Bob asks once before activating the skill — that's fine too.
-
-If it is not listed: restart Bob, and re-check that `SKILL.md` sits directly
-inside the `mistake-finder/` folder.
-
-### 3. Use it
-
-Open a conversation in Bob **Agent mode**, then:
-
-- Tests red? → *"Run mistake-finder on the failing tests."*
-- Just wrote something? → *"Check my code for mistakes."* (reviews your
-  uncommitted changes) or *"Check src/payments.py for mistakes."*
-- CI log instead of a local run? → *"Run mistake-finder on artifacts/ci.log."*
-
-Bob activates the skill from your description, fans out the subagents (watch
-them appear in parallel in the Tasks panel), then produces the ranked report.
-For triage mode it applies one fix at a time, re-runs the affected test, and
-rolls back anything that doesn't turn green.
-
-### 3b. Boxed errors straight in your terminal
-
-Bob reports inside the IDE. When you are running code in a plain terminal and
-want the same treatment — the mistake located and explained in one box instead
-of a bare traceback — wrap the command with the bundled script:
+Copy and paste this command, then press **Enter**:
 
 ```bash
-python .bob/skills/mistake-finder/mistake_box.py python mycode.py
-python .bob/skills/mistake-finder/mistake_box.py --file mycode.py   # syntax check only
-python .bob/skills/mistake-finder/mistake_box.py --log ci.log       # parse a saved traceback
+git clone https://github.com/TheLoneSynapse/Bug-Whisperer.git
 ```
 
-Your program's normal stdout passes straight through; the error becomes a
-single box with **WHERE** (file:line, the offending source line, a caret),
-**WHAT WENT WRONG** (exception + message), and **SUGGESTIONS** (concrete
-fixes). It is dependency-free Python 3.8+, tailors the advice to the exception
-(SyntaxError, NameError, TypeError, IndexError, KeyError, ZeroDivisionError,
-import errors, ...), falls back to a plain `+-|` box when the terminal cannot
-render the fancy one, and exits with your program's exit code so it drops into
-scripts and CI.
+Then move into the downloaded folder:
+
+```bash
+cd Bug-Whisperer
+```
+
+> ✅ You should now see a folder called `Bug-Whisperer` on your computer.
+
+---
+
+## 🐍 Step 2 — Install Python
+
+> **Skip this step if you already have Python 3.8 or newer.**
+
+### On Windows:
+1. Go to [https://python.org/downloads](https://python.org/downloads)
+2. Click the big yellow **"Download Python"** button
+3. Run the installer
+4. ⚠️ **IMPORTANT:** On the first screen of the installer, check the box that says **"Add Python to PATH"** before clicking Install
+5. Click **"Install Now"**
+6. When it's done, close and reopen your terminal, then type `python --version` to confirm
+
+### On Mac:
+1. Go to [https://python.org/downloads](https://python.org/downloads)
+2. Download the macOS installer and run it
+3. Follow the on-screen steps
+
+### On Linux:
+```bash
+sudo apt update
+sudo apt install python3 python3-pip
+```
+
+---
+
+## ⚙️ Step 3 — Install the tool
+
+Make sure you are inside the `Bug-Whisperer` folder in your terminal. Then run:
+
+```bash
+pip install .
+```
+
+> This command reads the project and installs everything automatically. It takes about 10–30 seconds.
+
+**What this does:**
+- Installs a command called `mistake-box` that you can use anywhere
+- Installs a pytest plugin that automatically shows errors in a friendly box every time you run tests
+
+> ✅ If you see no red errors, installation was successful!
+
+### Install the skill into IBM Bob (global — works in every project)
+
+```bash
+python install_skill.py
+```
+
+> This copies the skill into IBM Bob so it's available in every project you open.
+
+To check if it worked:
+```bash
+python install_skill.py --check
+```
+
+To uninstall it later:
+```bash
+python install_skill.py --remove
+```
+
+---
+
+## 🤖 Step 4 — Use it in IBM Bob IDE
+
+### First time setup (do this once):
+1. Open **IBM Bob IDE**
+2. Open this project folder (`Bug-Whisperer`) in Bob
+3. Go to **Settings → Skills**
+4. Confirm you can see `mistake-finder` in the list
+5. *(Optional)* Go to **Settings → Auto-Approve → Skills** and turn it **ON** — this means Bob won't ask for permission every time
+
+### Using it day-to-day:
+
+Open a **conversation** in Bob (make sure you're in **Agent mode**), then just type naturally:
+
+---
+
+**If your tests are failing:**
+```
+Run mistake-finder on the failing tests.
+```
+
+**If you just wrote some code and want it reviewed:**
+```
+Check my code for mistakes.
+```
+
+**To review a specific file:**
+```
+Check src/myfile.py for mistakes.
+```
+
+**If you have a log file from a CI/CD pipeline:**
+```
+Run mistake-finder on artifacts/ci.log.
+```
+
+---
+
+Bob will:
+1. Activate the skill automatically
+2. Spawn parallel mini-agents (you'll see them in the **Tasks panel**)
+3. Show you a ranked report of all findings
+4. In triage mode: apply one fix at a time, re-run the test, undo if it doesn't work
+
+---
+
+## 💻 Step 5 — Use it in your Terminal
+
+You don't need IBM Bob to use this tool! You can also use it directly in any terminal.
+
+### Run your code and see errors in a friendly box:
+
+```bash
+mistake-box python mycode.py
+```
+
+Instead of a raw Python traceback, you'll see a neat box like this:
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
@@ -201,65 +227,192 @@ scripts and CI.
 ╚══════════════════════════════════════════════════════════════╝
 ```
 
-### 3c. Voice mode — say it out loud
+### Other ways to use it:
 
-The same boxed report, driven by speech. Say *"find the mistake in demo math"*
-(by microphone or typed) and it works out which file you meant, runs it, prints
-the box, and reads the result back to you:
+| What you want to do | Command |
+|---------------------|---------|
+| Run a Python file and catch errors | `mistake-box python mycode.py` |
+| Check a file for syntax errors only | `mistake-box --file mycode.py` |
+| Parse an existing log/error file | `mistake-box --log ci.log` |
+| Run tests (errors shown in boxes automatically) | `pytest` |
+| Run tests WITHOUT the boxes | `pytest --no-mistake-box` |
 
-```bash
-voice.bat                     # push-to-talk loop: press Enter, speak, Enter
-voice.bat --text "find the mistake in demo json"   # no mic needed
-voice.bat --file mycode.py    # analyse one file now
-voice.bat --list-mics         # pick a microphone
+### On Windows — One-click launcher:
+
+Just double-click **`find-mistakes.bat`** or run it in your terminal:
+
+```
+find-mistakes.bat
 ```
 
-It recognises the file from what you say ("demo underscore math" →
-`demos/demo_math.py`), falls back to the file you pinned or edited most
-recently, and answers non-find questions with Granite on watsonx.ai via the
-Watson STT/TTS pair. No pip installs needed. Full details, credential setup and
-troubleshooting: [`VOICE.md`](VOICE.md).
+### Turn off the box globally (advanced):
 
-### 4. Capture the submission evidence
+```bash
+set MISTAKE_BOX=0      # Windows
+export MISTAKE_BOX=0   # Mac/Linux
+```
 
-Screenshots in Bob's task-session summary are a required deliverable:
+---
 
-1. In Bob, open **Tasks**, select the task, open the session/consumption
-   summary.
-2. Screenshot as PNG, name it `<team>_taskNN_<short-description>.png`, save
-   into [`bob_sessions/`](bob_sessions/README.md).
+## 🎙️ Step 6 — Use it with your Voice
 
-Expected shots: the parallel fan-out, the ranked report + fix loop, and the
-final green verification. All screenshots must be committed before submission.
+You can speak to find mistakes! Say things like *"find the mistake in demo math"* and it will find and explain the error out loud.
 
-### 5. Budget
+```bash
+voice.bat
+```
 
-One skill definition + roughly 3–4 Agent runs per demo (triage run, review
-run, optional verification run). Building the skill itself cost no Bobcoins.
+Press **Enter** to start speaking, speak your command, press **Enter** again.
 
-## Why it's safe to let near your code
+### Other voice commands:
 
-Guardrails are built into the skill instructions, not the model's goodwill:
+| Command | What it does |
+|---------|-------------|
+| `voice.bat` | Start push-to-talk loop |
+| `voice.bat --text "find the mistake in demo json"` | Type instead of speaking |
+| `voice.bat --file mycode.py` | Analyse one file directly |
+| `voice.bat --list-mics` | Show available microphones |
 
-- Investigating subagents are **read-only**.
-- Tests are the spec: never weakened, skipped, deleted, or "fixed" to match
-  buggy behavior.
-- Every claim needs `file:line` evidence — no evidence, not a finding.
-- One minimal fix at a time, one module per fix, full suite verified at the
-  end, rollback on any fix that misses.
-- In review mode, nothing is edited until you pick which findings to fix.
+> 📖 For full setup instructions (microphone setup, credentials, troubleshooting), read [`VOICE.md`](VOICE.md).
 
-## Adapting it
+---
 
-- **Add mistake classes** (e.g. frontend-specific, API-contract, i18n): append
-  a class section to `review-checklist.md` — the workflow picks it up
-  unchanged.
-- **Change report style:** edit `report-template.md`.
-- **Team rollout:** commit `.bob/skills/` in your repo, or have teammates run
-  `install_skill.py` once.
+## 🖼️ Example: What the output looks like
 
-## Compliance note
+Here's a real example. Imagine your test file has this failing test:
 
-No external datasets, no company data, no personal information, no third-party
-code. The skill is original markdown instruction sets; the installer is
-original Python with no dependencies.
+```python
+def test_add():
+    assert add(2, 3) == 5   # but add() returns -1 by mistake
+```
+
+Running `pytest` will now show:
+
+```
+╔════════════════════════════════════════════════════════════════╗
+║ MISTAKE FOUND - AssertionError                                 ║
+╠════════════════════════════════════════════════════════════════╣
+║ TEST                                                           ║
+║   tests/test_calc.py::test_add                                 ║
+╠════════════════════════════════════════════════════════════════╣
+║ WHERE                                                          ║
+║   tests/test_calc.py:5                                         ║
+║      4 | def test_add():                                       ║
+║ >>   5 |     assert add(2, 3) == 5                             ║
+╠════════════════════════════════════════════════════════════════╣
+║ WHAT WENT WRONG                                                ║
+║   AssertionError: assert -1 == 5  (where -1 = add(2, 3))      ║
+╠════════════════════════════════════════════════════════════════╣
+║ SUGGESTIONS                                                    ║
+║   1. Read the assertion: what value did the code actually      ║
+║      produce, and what did the test expect?                    ║
+║   2. The function returned -1 but 5 was expected. Check        ║
+║      the logic inside add().                                   ║
+╚════════════════════════════════════════════════════════════════╝
+```
+
+Much friendlier than a raw Python traceback!
+
+---
+
+## 🆘 Troubleshooting
+
+### ❓ "python is not recognized as a command"
+**Fix:** Python is not installed or not added to PATH.
+- Reinstall Python from [python.org](https://python.org/downloads) and make sure to check **"Add Python to PATH"** during installation.
+- Restart your terminal after installing.
+
+---
+
+### ❓ "pip is not recognized as a command"
+**Fix:** Try using `pip3` instead of `pip`:
+```bash
+pip3 install .
+```
+Or try:
+```bash
+python -m pip install .
+```
+
+---
+
+### ❓ "mistake-box is not recognized as a command"
+**Fix:** Run `pip install .` again from inside the `Bug-Whisperer` folder. Make sure you see "Successfully installed" at the end.
+
+---
+
+### ❓ The skill doesn't appear in Bob's Settings → Skills
+**Fix:**
+1. Run `python install_skill.py` again
+2. Restart IBM Bob completely (close and reopen)
+3. Check that the file `.bob/skills/mistake-finder/SKILL.md` exists in your project folder
+
+---
+
+### ❓ "git is not recognized as a command"
+**Fix:** Git is not installed.
+- Download and install from [git-scm.com](https://git-scm.com/downloads)
+- Restart your terminal after installing
+
+---
+
+### ❓ Tests are not showing the friendly box
+**Fix:** Make sure you installed the tool first with `pip install .` in the `Bug-Whisperer` folder. Also check that you're using the same Python/pip that runs your tests.
+
+---
+
+## 🗂️ Project File Map
+
+Here's what every file and folder in this project does:
+
+```
+Bug-Whisperer/
+│
+├── .bob/skills/mistake-finder/
+│   ├── SKILL.md               ← The brain of the skill (instructions for Bob)
+│   ├── review-checklist.md    ← List of mistake types to check for
+│   ├── report-template.md     ← How reports are formatted
+│   ├── box.py                 ← Core engine: parses errors and draws the box
+│   ├── mistake_box.py         ← The `mistake-box` command you run in terminal
+│   ├── pytest_plugin.py       ← Auto-shows boxes when pytest tests fail
+│   └── __init__.py            ← Makes the folder work as a Python package
+│
+├── tests/                     ← 15 example test files (one per Python library)
+├── demos/                     ← 14 demo files showing intentional bugs to find
+├── bob_sessions/              ← Screenshots proving the skill works (hackathon submission)
+│
+├── find_mistakes.py           ← Smart runner — detects which file to analyse
+├── find-mistakes.bat          ← One-click Windows launcher
+├── smart_run.py               ← Auto-detects which library a demo needs
+├── voice_agent.py             ← Voice mode engine
+├── voice.bat                  ← One-click voice launcher (Windows)
+├── menu.py                    ← Interactive menu to pick what to run
+├── install_skill.py           ← Installs the skill into IBM Bob globally
+├── pyproject.toml             ← Package config (used by pip install)
+├── README.md                  ← This file!
+├── VOICE.md                   ← Full voice setup guide
+└── .env.example               ← Template for API keys (copy to .env and fill in)
+```
+
+---
+
+## 🔒 Is it safe to use on my real code?
+
+Yes! Safety guardrails are built in:
+
+- 🔍 **Investigating agents are read-only** — they never change your files while looking for bugs
+- ✅ **Tests are sacred** — it never weakens, skips, or deletes your tests
+- 📍 **Every finding needs proof** — no `file:line` evidence = not reported
+- 🔧 **One fix at a time** — applies one small fix, runs the test, rolls back if it fails
+- 👀 **You approve changes** — in review mode, nothing is changed until you choose which findings to fix
+
+---
+
+## 🙏 Credits
+
+Built for the **IBM Bob 2.0 Hackathon** on [lablab.ai](https://lablab.ai).
+Powered by **IBM Bob** — the AI coding assistant.
+
+---
+
+*Happy coding — and may your bugs be few! 🐞*
