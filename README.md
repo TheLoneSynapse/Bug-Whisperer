@@ -1,4 +1,4 @@
-# Mistake Finder — an IBM Bob skill that finds your mistakes
+# Bug Whisperer — an IBM Bob skill that finds your mistakes
 
 > **Theme:** Build with purpose using IBM Bob 2.0 (IBM Bob 2.0 Hackathon, lablab.ai)
 > **What it is:** A portable Bob **skill** — no example code, no sample app.
